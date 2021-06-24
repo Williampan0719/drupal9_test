@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+  web-server:
+    container_name: ${PROJECT_KEY}-web-server
+    image: ciandtchina/drupal-web:php${PHP_VERSION}-apache
+    volumes:
+      - ../source:/var/www/html
+    environment:
+      - APACHE_RUN_USER=docker
+      - APACHE_RUN_GROUP=docker
+      - CURRENT_USER_UID=${CURRENT_USER_UID}
+      - CURRENT_USER_GID=${CURRENT_USER_GID}
+    networks:
+      default-network:
+    expose:
+      - "80"
+      - "443"
+    ports:
+      - "1314:80"
+
+  database:
+    container_name: ${PROJECT_KEY}-database
+    image: mysql:${MYSQL_VERSION}
+    command: mysqld --max_allowed_packet=768M
+    networks:
+      default-network:
+    restart: always
+    volumes:
+      - ../persist-data/db-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=3.1415926
+      - MYSQL_ROOT_PASSWORD=3.1415926
+    expose:
+      - "3306"
+    ports:
+      - "33067:3306"
+
+#  apache-solr:
+#    container_name: ${PROJECT_KEY}-apache-solr
+#    image: osiolabs/drupalsearchapi-solr:6.6
+#    networks:
+#      default-network:
+#    restart: always
+#    expose:
+#      - "8983"
+#    volumes:
+#      - ./etc/solr/conf:/opt/solr/conf
+#    environment:
+#      SOLR_CORE_NAME: drupal_solr
+#    command: 'bash -e -c "yes | cp -rf /opt/solr/conf /opt/solr/server/solr/drupal_solr; solr-foreground;"'
+#    ports:
+#      - "8983:8983"

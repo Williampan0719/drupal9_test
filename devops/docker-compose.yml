@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  web-server:
+    container_name: ${PROJECT_KEY}-web-server
+    image: ciandtchina/drupal-web:php${PHP_VERSION}-apache
+    environment:
+      - APACHE_RUN_USER=docker
+      - APACHE_RUN_GROUP=docker
+      - CURRENT_USER_UID=${CURRENT_USER_UID}
+      - CURRENT_USER_GID=${CURRENT_USER_GID}
+    networks:
+      default-network:
+
+networks:
+  default-network:
